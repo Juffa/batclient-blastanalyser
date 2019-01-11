@@ -1,0 +1,130 @@
+SCRIPT_NAME="anal";
+SCRIPT_DESC = "Reports the resists from analysis of magic lore skill";
+SCRIPT_OFF = false;
+
+String spellName="";
+
+String[] fireType ={"fire blast","flame arrow","meteor swarm","lava blast","lava storm","con fioco"};
+String[] acidType ={"acid arrow","disruption","acid blast","acid rain","acid storm"};
+String[] elecType ={"blast lightning","electrocution","chain lightning","shocking grasp","lightning storm"};
+String[] coldType ={"chill touch","cold ray","cone of cold","darkfire","hailstorm"};
+String[] manaType ={"levin bolt","magic eruption","magic missile","golden arrow","magic wave"};
+String[] asphType ={"vacuum ball","blast vacuum","vacuum globe","vacuumbolt","chaos bolt"};
+String[] poisType ={"venom strike","summon carnal spores","thorn spray","poison spray","killing cloud","herbal poison blast","herbal poison spray"};
+String[] psiType ={"bolt of knowledge","noituloves deathlore"};
+
+void bootup(){
+	triggers();
+}
+
+
+void run(){
+}
+
+
+void triggers(){
+	
+	triggerManager.newTrigger("spellHit",
+	"^You watch with self-pride as your ([A-Za-z -]+) hits ([A-Za-z -]+).$",
+	 "$"+SCRIPT_NAME+".setSpell %1");
+
+	triggerManager.newTrigger("spellHit2",
+	"^You hit ([A-Za-z -]+) with your ([A-Za-z -]+).$",
+	 "$"+SCRIPT_NAME+".setSpell %2");
+
+	triggerManager.newTrigger("spellAnalyzeScreams",
+	"^([A-Za-z -]+) screams in pain.$",
+	 "$"+SCRIPT_NAME+".reportScreams %1");
+
+	triggerManager.newTrigger("spellAnalyzeWrithes",
+	"^([A-Za-z -]+) writhes in agony.$",
+	 "$"+SCRIPT_NAME+".reportWrithes %1");
+
+	triggerManager.newTrigger("spellAnalyzeShudders",
+	"^([A-Za-z -]+) shudders from the force of the attack.$",
+	 "$"+SCRIPT_NAME+".reportShudders %1");
+
+	triggerManager.newTrigger("spellAnalyzeGrunts",
+	"^([A-Za-z -]+) grunts from the pain.$",
+	 "$"+SCRIPT_NAME+".reportGrunts %1");
+
+	triggerManager.newTrigger("spellAnalyzeWinces",
+	"^([A-Za-z -]+) winces a little from the pain.$",
+	 "$"+SCRIPT_NAME+".reportWinces %1");
+
+	triggerManager.newTrigger("spellAnalyzeShrugs",
+	"^([A-Za-z -]+) shrugs off the attack.$",
+	 "$"+SCRIPT_NAME+".reportShrugs %1");
+}
+
+void setSpell(){
+	clientGUI.printText("general","Detected spell: "+argument+"\n","FFFFFF");
+	spellName=argument;
+}
+
+void reportScreams(){
+	clientGUI.doCommand("@@party report "+argument+" screams "+returnType()+"! (0% resist)");
+}
+void reportWrithes(){
+	clientGUI.doCommand("@@party report "+argument+" writhes "+returnType()+"! (20% resist))");
+}
+void reportShudders(){
+	clientGUI.doCommand("@@party report "+argument+" shudders "+returnType()+"!(40% resist)");
+}
+void reportGrunts(){
+	clientGUI.doCommand("@@party report "+argument+" grunts "+returnType()+"! (60% resist)");
+}
+void reportWinces(){
+	clientGUI.doCommand("@@party report "+argument+" winces "+returnType()+"! (80% resist)");
+}
+void reportShrugs(){
+	clientGUI.doCommand("@@party report "+argument+" shrugs "+returnType()+"! (100% resist)");
+}
+
+
+
+String returnType(){
+String type="error";
+	for(int i=0;i<fireType.length;i++){
+		if(spellName.equals(fireType[i])){
+			type="fire";
+		}
+	}
+	for(int i=0;i<acidType.length;i++){
+		if(spellName.equals(acidType[i])){
+			type="acid";
+		}
+	}
+	for(int i=0;i<elecType.length;i++){
+		if(spellName.equals(elecType[i])){
+			type="electric";
+		}
+	}
+	for(int i=0;i<coldType.length;i++){
+		if(spellName.equals(coldType[i])){
+			type="cold";
+		}
+	}
+	for(int i=0;i<manaType.length;i++){
+		if(spellName.equals(manaType[i])){
+			type="magic";
+		}
+	}
+	for(int i=0;i<asphType.length;i++){
+		if(spellName.equals(asphType[i])){
+			type="asphyx";
+		}
+	}
+	for(int i=0;i<poisType.length;i++){
+		if(spellName.equals(poisType[i])){
+			type="poison";
+		}
+	}
+	for(int i=0;i<psiType.length;i++){
+		if(spellName.equals(psiType[i])){
+			type="psi";
+		}
+	}
+	return type;
+}
+
