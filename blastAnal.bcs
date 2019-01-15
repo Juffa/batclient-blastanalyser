@@ -3,6 +3,7 @@ SCRIPT_DESC = "Reports the resists from analysis of magic lore skill";
 SCRIPT_OFF = false;
 
 String spellName="";
+boolean setDebug=false;
 
 String[] fireType ={"fire blast","flame arrow","meteor swarm","lava blast","lava storm","con fioco"};
 String[] acidType ={"acid arrow","disruption","acid blast","acid rain","acid storm"};
@@ -12,6 +13,7 @@ String[] manaType ={"levin bolt","magic eruption","magic missile","golden arrow"
 String[] asphType ={"vacuum ball","blast vacuum","vacuum globe","vacuumbolt","chaos bolt"};
 String[] poisType ={"venom strike","summon carnal spores","thorn spray","poison spray","killing cloud","herbal poison blast","herbal poison spray"};
 String[] psiType ={"bolt of knowledge","noituloves deathlore"};
+String[] physType={"noituloves dischord"};
 
 void bootup(){
 	triggers();
@@ -19,6 +21,27 @@ void bootup(){
 
 
 void run(){
+	if(argument !=null){
+		switch(argument){
+			case "debug":
+				if(setDebug==false){
+					setDebug=true;
+					clientGUI.printText("general","Turning debug on.\n");
+				}else{
+					setDebug=false;
+					clientGUI.printText("general","Turning debug off.\n");
+				}
+			break;
+			
+			default:
+				clientGUI.printText("general","For now you can try $anal debug.\n");
+
+		
+		}
+	}else{
+		clientGUI.printText("general","For now you can try $anal debug.\n");
+		clientGUI.printText("general","Debug is currently "+setDebug+"\n");
+	}
 }
 
 
@@ -26,65 +49,89 @@ void triggers(){
 	
 	triggerManager.newTrigger("spellHit",
 	"^You watch with self-pride as your ([A-Za-z -]+) hits ([A-Za-z -]+).$",
-	 "$"+SCRIPT_NAME+".setSpell %1");
+	 "$"+SCRIPT_NAME+".setSpell %1",
+	 false, true, false,
+     new Color[]{new Color(255, 128, 128)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellHit2",
 	"^You hit ([A-Za-z -]+) with your ([A-Za-z -]+).$",
-	 "$"+SCRIPT_NAME+".setSpell %2");
+	 "$"+SCRIPT_NAME+".setSpell %2",
+	 false, true, false,
+     new Color[]{new Color(255, 128, 128)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellAnalyzeScreams",
 	"^([A-Za-z -]+) screams in pain.$",
-	 "$"+SCRIPT_NAME+".reportScreams %1");
+	 "$"+SCRIPT_NAME+".reportScreams %1",
+	 false, true, false,
+     new Color[]{new Color(255, 96, 96)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellAnalyzeWrithes",
 	"^([A-Za-z -]+) writhes in agony.$",
-	 "$"+SCRIPT_NAME+".reportWrithes %1");
+	 "$"+SCRIPT_NAME+".reportWrithes %1",
+	 false, true, false,
+     new Color[]{new Color(255, 96, 96)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellAnalyzeShudders",
 	"^([A-Za-z -]+) shudders from the force of the attack.$",
-	 "$"+SCRIPT_NAME+".reportShudders %1");
+	 "$"+SCRIPT_NAME+".reportShudders %1",
+	 false, true, false,
+     new Color[]{new Color(255, 96, 96)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellAnalyzeGrunts",
 	"^([A-Za-z -]+) grunts from the pain.$",
-	 "$"+SCRIPT_NAME+".reportGrunts %1");
+	 "$"+SCRIPT_NAME+".reportGrunts %1",
+	 false, true, false,
+     new Color[]{new Color(255, 96, 96)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellAnalyzeWinces",
 	"^([A-Za-z -]+) winces a little from the pain.$",
-	 "$"+SCRIPT_NAME+".reportWinces %1");
+	 "$"+SCRIPT_NAME+".reportWinces %1",
+	 false, true, false,
+     new Color[]{new Color(255, 96, 96)}, Font.PLAIN);
 
 	triggerManager.newTrigger("spellAnalyzeShrugs",
 	"^([A-Za-z -]+) shrugs off the attack.$",
-	 "$"+SCRIPT_NAME+".reportShrugs %1");
+	 "$"+SCRIPT_NAME+".reportShrugs %1",
+	 false, true, false,
+     new Color[]{new Color(255, 96, 96)}, Font.PLAIN);
 }
 
 void setSpell(){
-	clientGUI.printText("general","Detected spell: "+argument+"\n","FFFFFF");
+	if(setDebug==true){
+		clientGUI.printText("general","Detected spell: "+argument+"\n","FFFFFF");
+	}
 	spellName=argument;
 }
 
 void reportScreams(){
 	clientGUI.doCommand("@@party report "+argument+" screams "+returnType()+"! (0% resist)");
+	spellName="";
 }
 void reportWrithes(){
 	clientGUI.doCommand("@@party report "+argument+" writhes "+returnType()+"! (20% resist))");
+	spellName="";
 }
 void reportShudders(){
 	clientGUI.doCommand("@@party report "+argument+" shudders "+returnType()+"!(40% resist)");
+	spellName="";
 }
 void reportGrunts(){
 	clientGUI.doCommand("@@party report "+argument+" grunts "+returnType()+"! (60% resist)");
+	spellName="";
 }
 void reportWinces(){
 	clientGUI.doCommand("@@party report "+argument+" winces "+returnType()+"! (80% resist)");
+	spellName="";
 }
 void reportShrugs(){
 	clientGUI.doCommand("@@party report "+argument+" shrugs "+returnType()+"! (100% resist)");
+	spellName="";
 }
 
 
 
 String returnType(){
-String type="error";
+String type="error: type missing";
 	for(int i=0;i<fireType.length;i++){
 		if(spellName.equals(fireType[i])){
 			type="fire";
@@ -123,6 +170,11 @@ String type="error";
 	for(int i=0;i<psiType.length;i++){
 		if(spellName.equals(psiType[i])){
 			type="psi";
+		}
+	}
+	for(int i=0;i<physType.length;i++){
+		if(spellName.equals(physType[i])){
+			type="physical?";
 		}
 	}
 	return type;
